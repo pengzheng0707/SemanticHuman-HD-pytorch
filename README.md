@@ -11,6 +11,20 @@ The main contributions of our human image systhesis model are listed as followed
 ## Pipeline
 ![Pipeline](/pic/pipeline_00.png)
 
+## Qucik Start
+### Requirements
+* We finished our training and testing tasks on 4 NVIDIA A40 GPUs.
+* 64-bit Python 3.8 and PyTorch 1.11.0 (or later). See [https://pytorch.org](https://pytorch.org) for PyTorch install instructions.
+* CUDA toolkit 11.3 or later.
+* pytorch3d. See [https://github.com/facebookresearch/pytorch3d/blob/main/INSTALL.md](https://github.com/facebookresearch/pytorch3d/blob/main/INSTALL.md) for install instructions.
+
+Clone this repo:
+```
+git clone https://github.com/Alfonsoever/SemanticHuman-HD.git
+
+cd SemanticHuman-HD
+```
+
 ## Results
 
 ### View control
