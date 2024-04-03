@@ -28,32 +28,25 @@ cd SemanticHuman-HD
 ## Results
 
 ### View control
-![3d1](/gif/3d1.gif)
-![3d2](/gif/3d2.gif)
-![3d3](/gif/3d3.gif)
+<table>
+  <tr>
+    <td><img src = /gif/3d1.gif width = 40%/></td>
+    <td><img src = /gif/3d2.gif width = 40%/></td>
+    <td><img src = /gif/3d3.gif width = 40%/></td>
+  </tr>
+</table>
+
 
 ### Pose control
-![anim1](/gif/anim1.gif)
-![anim2](/gif/anim2.gif)
-![anim3](/gif/anim3.gif)
+<table>
+  <tr>
+    <td><img src = /gif/anim1.gif width = 40%/></td>
+    <td><img src = /gif/anim2.gif width = 40%/></td>
+    <td><img src = /gif/anim3.gif width = 40%/></td>
+  </tr>
+</table>
 
-### Semantic disentanglement
-![semantic_disentanglement](/pic/change_00.png)
 
-### Out-of-domain image synthesis
-![ood](/pic/ood_00.png)
-
-### Garment generation
-![garment](/pic/garment_00.png)
-
-### Conditional image synthesis
-![cond_image](/pic/cond_00.png)
-
-### Semantic-aware interpolation
-![Semantic_interpolation](/pic/interpolate_part_00.png)
-
-### 3D garment interpolation
-![garment_interpolation](/pic/interpolate_garment_00.png)
 
 To see more details,please go to our [project page](https://pengzheng0707.github.io/SemanticHuman-HD/).
 
