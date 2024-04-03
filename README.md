@@ -9,6 +9,12 @@ The main contributions of our human image systhesis model are listed as followed
 1. The first method to synthesize **semantic disentangled full-body** human image.
 2. We propose a **3D-aware super-resolution module** which enable our project achieve 3D-aware image synthesis at $1024^2$ resolution.
 
+## TODO
+
+- [ ] Training code
+- [ ] Datasets prepocessing code
+- [ ] Code for more applications
+
 ## Qucik Start
 ### Requirements
 * We finished our training and testing tasks on 4 NVIDIA A40 GPUs.
@@ -34,7 +40,11 @@ python setup.py install
 ```
 sh ./scripts/download_model.sh
 ```
-
+Download [SMPL models](https://smpl.is.tue.mpg.de) (1.0.0 for Python 2.7 (10 shape PCs)) and move them to the corresponding locations:
+```
+mkdir training/deformers/smplx/SMPLX
+mv /path/to/smpl/models/basicModel_f_lbs_10_207_0_v1.0.0.pkl training/deformers/smplx/SMPLX/SMPL_NEUTRAL.pkl
+```
 ## Generate 3D-aware human rendering samples of $1024^2$ resolution
 ```
 sh ./scripts/test.sh
