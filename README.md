@@ -30,10 +30,22 @@ conda env create -f env.yml
 conda activate HD
 python setup.py install
 ```
+
 ## Download pretrained model:
 
 ```
 sh ./scripts/download_model.sh
+```
+
+## Generate 3D-aware human rendering samples of $1024^2$ resolution
+```
+sh ./scripts/test1024.sh
+```
+
+## Evaluation
+```
+sh ./scripts/fid.sh
+sh ./scripts/fid1024.sh
 ```
 
 
