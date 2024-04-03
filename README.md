@@ -24,11 +24,11 @@ git clone https://github.com/Alfonsoever/SemanticHuman-HD.git
 
 cd SemanticHuman-HD
 ```
-We suggest use pip or conda to manage the python environment:
+We suggest use anaconda to manage the python environment:
 ```
-conda create -n HD python=3.8
+conda env create -f env.yml
 conda activate HD
-pip install -r req.txt
+python setup.py install
 
 ```
 
