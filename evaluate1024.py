@@ -1,4 +1,4 @@
-"""evaluate fid of AG3D."""
+"""evaluate fid of HD(1024^2 resolution)."""
 
 import os
 import click
