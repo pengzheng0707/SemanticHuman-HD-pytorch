@@ -1,4 +1,4 @@
-name: ag3d
+name: HD
 channels:
   - anaconda
   - conda-forge
