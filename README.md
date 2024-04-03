@@ -29,7 +29,11 @@ We suggest use anaconda to manage the python environment:
 conda env create -f env.yml
 conda activate HD
 python setup.py install
-
+```
+##Download pretrained model:
+Download the pretrained model ![here](https://drive.google.com/file/d/1bQvDgCRIdJWV5vi0iuZ5ymSIjxdNU3Vx/view?usp=drive_link) and move it to the model directory.
+```
+mkdir model
 ```
 
 
