@@ -61,9 +61,9 @@ sh ./scripts/fid.sh
 ### View control
 <table>
   <tr>
-    <td><img src = /gif/3d1.gif width = 40%/></td>
-    <td><img src = /gif/3d2.gif width = 40%/></td>
-    <td><img src = /gif/3d3.gif width = 40%/></td>
+    <td><img src = /asserts/3d1.gif width = 40%/></td>
+    <td><img src = /asserts/3d2.gif width = 40%/></td>
+    <td><img src = /asserts/3d3.gif width = 40%/></td>
   </tr>
 </table>
 
@@ -71,9 +71,9 @@ sh ./scripts/fid.sh
 ### Pose control
 <table>
   <tr>
-    <td><img src = /gif/anim1.gif width = 40%/></td>
-    <td><img src = /gif/anim2.gif width = 40%/></td>
-    <td><img src = /gif/anim3.gif width = 40%/></td>
+    <td><img src = /asserts/anim1.gif width = 40%/></td>
+    <td><img src = /asserts/anim2.gif width = 40%/></td>
+    <td><img src = /asserts/anim3.gif width = 40%/></td>
   </tr>
 </table>
 
