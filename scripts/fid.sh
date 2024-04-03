@@ -1,1 +1,1 @@
-CUDA_VISIBLE_DEVICES=2 python evaluate.py --metrics=fid5k_full --network=out/0223/00003-images/network-snapshot_000628.pkl --data=/home/liuruiqi/zp/SemanticHumanGAN/datasets/DeepFashion/images  --res=256
+python ./../evaluate.py --metrics=fid50k_full --network=/path/to/model --data=/path/to/dataset --res=1024

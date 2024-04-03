@@ -123,30 +123,6 @@ def gen_samples(G, z, c, truncation,res, is_img, is_img_raw, is_normal, is_mesh,
         img_mesh = render_trimesh(mesh_new)[:,:,:3]
         img_mesh = cv2.resize(img_mesh, (res,res))
         rendering.append(img_mesh)                
-    # if True:
-    #     img_depth = -output['image_depth']
-    #     img_depth = (img_depth-img_depth.min()) * (255 / (img_depth.max() - img_depth.min()))
-    #     img_depth = img_depth.clamp(0, 255).to(torch.uint8).permute(0, 2, 3, 1).cpu().numpy()[0]
-    #     # img_depth = cv2.resize(img_depth, (res,res))
-    #     # rendering.append(img_normal)
-    #     imageio.imsave(save_path.replace('.png','_depth.png'), img_depth)
-
-    # if True:
-    #     normal_raw = (output['normal_raw'] * 127.5 + 128).clamp(0, 255).to(torch.uint8).permute(0, 2, 3, 1).cpu().numpy()[0]
-    #     # normal_raw = cv2.resize(normal_raw, (res,res))
-    #     # rendering.append(img_normal)
-    #     imageio.imsave(save_path.replace('.png','_normal_raw.png'), normal_raw)
-    
-    # if True:
-    #     depth_raw = -output['depth_raw']
-    #     depth_raw = (depth_raw-depth_raw.min()) * (255 / (depth_raw.max() - depth_raw.min()))
-    #     depth_raw = depth_raw.clamp(0, 255).to(torch.uint8).permute(0, 2, 3, 1).cpu().numpy()[0]
-    #     # img_depth = cv2.resize(img_depth, (res,res))
-    #     # rendering.append(img_normal)
-    #     imageio.imsave(save_path.replace('.png','_depth_raw.png'), depth_raw)
-
-    # rendering = np.concatenate(rendering, axis=1)
-    # imageio.imsave(save_path, rendering)
 
     tensor2seg(output['image_seg'], save_path.replace('.png', '_seg.png'))
 
@@ -156,9 +132,6 @@ def gen_samples(G, z, c, truncation,res, is_img, is_img_raw, is_normal, is_mesh,
 def gen_pose(G, z, c, truncation,res, is_img, is_img_raw, is_normal, is_mesh, save_path, cano=False):
     
     rendering = []
-    # z = torch.load('z.pt')
-    # z = torch.load('result/1024test2/00014_z.pt')
-    # c = torch.load('c.pt')
     if cano:
         
         c[:,-82:-10] = 0
@@ -167,7 +140,6 @@ def gen_pose(G, z, c, truncation,res, is_img, is_img_raw, is_normal, is_mesh, sa
         c[:,25] = 1
         c[:,27] = 0.15
         
-    # output = G(z=z, c=c, truncation_psi=truncation)
     output = G.synthesis(ws=z, c=c, is_test=True)
     
     if is_img:
@@ -177,15 +149,11 @@ def gen_pose(G, z, c, truncation,res, is_img, is_img_raw, is_normal, is_mesh, sa
     if is_img_raw:
         
         img_raw = (output['image_raw'] * 127.5 + 128).clamp(0, 255).to(torch.uint8).permute(0, 2, 3, 1).cpu().numpy()[0]
-        # img_raw = cv2.resize(img_raw, (res,res))
-        # rendering.append(img_raw)
         imageio.imsave(save_path.replace('.png','_raw.png'), img_raw)
     
     if is_normal:
         
         img_normal = (output['image_normal'] * 127.5 + 128).clamp(0, 255).to(torch.uint8).permute(0, 2, 3, 1).cpu().numpy()[0]
-        # img_normal = cv2.resize(img_normal, (res,res))
-        # rendering.append(img_normal)
         imageio.imsave(save_path.replace('.png','_normal.png'), img_normal)
         
     if is_mesh:
@@ -197,54 +165,23 @@ def gen_pose(G, z, c, truncation,res, is_img, is_img_raw, is_normal, is_mesh, sa
         img_mesh = render_trimesh(mesh_new)[:,:,:3]
         img_mesh = cv2.resize(img_mesh, (res,res))
         rendering.append(img_mesh)                
-    # if True:
-    #     img_depth = -output['image_depth']
-    #     img_depth = (img_depth-img_depth.min()) * (255 / (img_depth.max() - img_depth.min()))
-    #     img_depth = img_depth.clamp(0, 255).to(torch.uint8).permute(0, 2, 3, 1).cpu().numpy()[0]
-    #     # img_depth = cv2.resize(img_depth, (res,res))
-    #     # rendering.append(img_normal)
-    #     imageio.imsave(save_path.replace('.png','_depth.png'), img_depth)
-
-    # if True:
-    #     normal_raw = (output['normal_raw'] * 127.5 + 128).clamp(0, 255).to(torch.uint8).permute(0, 2, 3, 1).cpu().numpy()[0]
-    #     # normal_raw = cv2.resize(normal_raw, (res,res))
-    #     # rendering.append(img_normal)
-    #     imageio.imsave(save_path.replace('.png','_normal_raw.png'), normal_raw)
-    
-    # if True:
-    #     depth_raw = -output['depth_raw']
-    #     depth_raw = (depth_raw-depth_raw.min()) * (255 / (depth_raw.max() - depth_raw.min()))
-    #     depth_raw = depth_raw.clamp(0, 255).to(torch.uint8).permute(0, 2, 3, 1).cpu().numpy()[0]
-    #     # img_depth = cv2.resize(img_depth, (res,res))
-    #     # rendering.append(img_normal)
-    #     imageio.imsave(save_path.replace('.png','_depth_raw.png'), depth_raw)
 
     rendering = np.concatenate(rendering, axis=1)
     imageio.imsave(save_path, rendering)
 
-    # tensor2seg(output['seg_raw'], save_path.replace('.png', '_seg.png'))
-
-    # torch.save(c,save_path.replace('.png','_c.pt'))
-    # torch.save(z,save_path.replace('.png','_z.pt'))
+    tensor2seg(output['seg_raw'], save_path.replace('.png', '_seg.png'))
+    torch.save(c,save_path.replace('.png','_c.pt'))
+    torch.save(z,save_path.replace('.png','_z.pt'))
 
 def gen_semantic(G, z, c, truncation,res, is_img, is_img_raw, is_normal, is_mesh, save_path, cano=False, new_c_map=None, idx=0):
-    # z = torch.load('result/1024test2/00014_z.pt')
-    # c = torch.load('c.pt')
-    # z = G.mapping(z, c, truncation_psi=truncation)
     rendering = []
     new_z = mixing_noise(1, G.z_dim, prob=0, device=z[0].device)
     new_z_map = G.mapping(new_z, c, truncation_psi=truncation)
-    # if new_c_map is not None:
     if True:
-        # new_c_map[:,:111] = c[:,:111]
         new_z_map = G.mapping(new_z, new_c_map, truncation_psi=truncation)
-    # z[:,:28,:] = new_z_map[:,:28,:]
-    i = 4
+    i = 1   # semantic index, 1 is for tops
     if idx != 0:
         z[:,28*i:28*(i+1),:] = new_z_map[:,28*i:28*(i+1),:]
-        i = 5
-        z[:,28*i:28*(i+1),:] = new_z_map[:,28*i:28*(i+1),:]
-        # z[:,28*i:28*(i+3),:] = new_z_map[:,28*i:28*(i+3),:]
     if cano:
         
         c[:,-82:-10] = 0
@@ -253,7 +190,6 @@ def gen_semantic(G, z, c, truncation,res, is_img, is_img_raw, is_normal, is_mesh
         c[:,25] = 1
         c[:,27] = 0.15
         
-    # output = G(z=z, c=c, truncation_psi=truncation)
     output = G.synthesis(ws=z, c=c)
     if is_img:
         img = (output['image'] * 127.5 + 128).clamp(0, 255).to(torch.uint8).permute(0, 2, 3, 1).cpu().numpy()[0]
@@ -268,8 +204,6 @@ def gen_semantic(G, z, c, truncation,res, is_img, is_img_raw, is_normal, is_mesh
     if is_normal:
         
         img_normal = (output['image_normal'] * 127.5 + 128).clamp(0, 255).to(torch.uint8).permute(0, 2, 3, 1).cpu().numpy()[0]
-        # img_normal = cv2.resize(img_normal, (res,res))
-        # rendering.append(img_normal)
         imageio.imsave(save_path.replace('.png','_normal.png'), img_normal)
         
     if is_mesh:
@@ -286,22 +220,6 @@ def gen_semantic(G, z, c, truncation,res, is_img, is_img_raw, is_normal, is_mesh
     imageio.imsave(save_path, rendering)
 
 def gen_novel_view(G, z, c, truncation,res, is_img, is_img_raw, is_normal, is_mesh, save_path, angles):
-    
-    # w = G.mapping(z, c, truncation_psi=truncation)
-    z_dir = 'invs5/latent'
-    z_paths = os.listdir(z_dir)
-    i = 58
-    z_path = os.path.join(z_dir, z_paths[i])
-    new_z_map = torch.from_numpy(np.load(z_path)).to(z.device)
-    # new_z_map2 = torch.from_numpy(np.load('invs/latent/WOMEN-Pants-id_00004842-01_4_full.npy')).to(z.device)
-    new_z2 = torch.load('/home/zhengpeng/AG3Dforzp/result/1024top/00029_z.pt')
-    # print(new_z2)
-    new_c2 = torch.load('/home/zhengpeng/AG3Dforzp/result/1024top/00029_c.pt').to(z.device)
-    new_z_map2 = G.mapping(new_z2, new_c2, truncation_psi=0.7)
-    i = 3
-    z[:,28*i:28*(i+1),:] = new_z_map[:,28*i:28*(i+1),:]
-    i=1
-    z[:,28*i:28*(i+1),:] = new_z_map2[:,28*i:28*(i+1),:]
     rot = c[:,29:32].data.cpu().numpy()[0]
     if is_mesh:
         mesh = G.get_mesh(z, c, voxel_resolution=300,truncation_psi=truncation)[0]
@@ -321,7 +239,6 @@ def gen_novel_view(G, z, c, truncation,res, is_img, is_img_raw, is_normal, is_me
         c_new = c.clone()
         c_new[:,29:32] = torch.from_numpy(rectify_pose(rot.copy(), np.array([0,-angle,0]))).to(c_new.device)
 
-        # output = G.synthesis(ws=w, c=c_new)
         output = G.synthesis(ws=z, c=c_new)
         
         if is_img:
@@ -338,8 +255,6 @@ def gen_novel_view(G, z, c, truncation,res, is_img, is_img_raw, is_normal, is_me
         if is_normal:
             
             img_normal = (output['image_normal'] * 127.5 + 128).clamp(0, 255).to(torch.uint8).permute(0, 2, 3, 1).cpu().numpy()[0]
-            # img_normal = cv2.resize(img_normal, (res,res))
-            # rendering.append(img_normal)
             imageio.imsave(save_path.replace('.mp4',f'_{k}_normal.png'), img_normal)
             
         if is_mesh:
@@ -347,17 +262,10 @@ def gen_novel_view(G, z, c, truncation,res, is_img, is_img_raw, is_normal, is_me
             img_mesh = render_trimesh(mesh_new)[:,:,:3]
             rendering.append(img_mesh)
 
-        # face_img = (crop_face(output['image'], c, size=output['image'].shape[-2]//8) * 127.5 + 128).clamp(0, 255).to(torch.uint8).permute(0, 2, 3, 1).cpu().numpy()[0]
-        # face_img = cv2.resize(face_img, (res//2,res))
-        # rendering.append(face_img)
 
         all = np.concatenate(rendering, axis=1)
         imageio.imsave(save_path.replace('.mp4',f'_{k}.png'), all)
         tensor2seg(output['image_seg'], save_path.replace('.mp4',f'seg_{k}.png'))
-        # images.append(all)
-
-    # imageio.mimwrite(save_path, images)
-    # imageio.v2.mimwrite(save_path, images)
 
 def gen_video(G, z, c, truncation,res, is_img, is_img_raw, is_normal, is_mesh, save_path, angles):
     
@@ -398,17 +306,12 @@ def gen_video(G, z, c, truncation,res, is_img, is_img_raw, is_normal, is_mesh, s
         if is_normal:
             
             img_normal = (output['image_normal'] * 127.5 + 128).clamp(0, 255).to(torch.uint8).permute(0, 2, 3, 1).cpu().numpy()[0]
-            # img_normal = cv2.resize(img_normal, (res,res))
             rendering.append(img_normal)
             
         if is_mesh:
             mesh_new = trimesh.Trimesh(vertices=np.einsum('ij,nj->ni',rot_mat,mesh_verts), faces=mesh_faces)    
             img_mesh = render_trimesh(mesh_new)[:,:,:3]
             rendering.append(img_mesh)
-
-        # face_img = (crop_face(output['image'], c, size=output['image'].shape[-2]//8) * 127.5 + 128).clamp(0, 255).to(torch.uint8).permute(0, 2, 3, 1).cpu().numpy()[0]
-        # face_img = cv2.resize(face_img, (res//2,res))
-        # rendering.append(face_img)
 
         all = np.concatenate(rendering, axis=1)
         images.append(all)
@@ -536,13 +439,11 @@ def gen_anim(G, z, c, truncation,res, is_img, is_img_raw, is_normal, is_mesh, sa
         if is_img_raw:
             
             img_raw = (output['image_raw'] * 127.5 + 128).clamp(0, 255).to(torch.uint8).permute(0, 2, 3, 1).cpu().numpy()[0]
-            # img_raw = cv2.resize(img_raw, (res,res))[:,res//4:-res//4,:3]
             rendering.append(img_raw)
         
         if is_normal:
             
             normal = (output['image_normal'] * 127.5 + 128).clamp(0, 255).to(torch.uint8).permute(0, 2, 3, 1).cpu().numpy()[0]
-            # normal = cv2.resize(normal, (res,res))[:,res//4:-res//4,:3]
             rendering.append(normal)
             
         if is_mesh:
@@ -557,8 +458,6 @@ def gen_anim(G, z, c, truncation,res, is_img, is_img_raw, is_normal, is_mesh, sa
         images.append(all)
 
     imageio.mimwrite(save_path, images)
-    # imageio.v2.mimwrite(save_path, images)
-    # imageio.imwrite(save_path, images)
     
     torch.save(c,save_path.replace('.mp4','_c.pt'))
     torch.save(z,save_path.replace('.mp4','_z.pt'))

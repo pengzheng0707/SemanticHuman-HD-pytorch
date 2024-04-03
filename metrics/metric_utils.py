@@ -370,8 +370,8 @@ def compute_feature_stats_for_generator(opts, detector_url, detector_kwargs, rel
                 z = mixing_noise(batch_gen, G.z_dim, prob=0.9, device=opts.device)
                 c = next(c_iter).to(opts.device)
                 output = G(z=z, c=c, **opts.G_kwargs)
-                # img = output['image'].detach()
-                img = output['image_raw'].detach()
+                img = output['image'].detach()
+                # img = output['image_raw'].detach()
                 normal = output['image_normal'].detach()
             
                 img = (img * 127.5 + 128).clamp(0, 255).to(torch.uint8).detach()

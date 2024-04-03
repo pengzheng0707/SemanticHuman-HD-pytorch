@@ -1,0 +1,1 @@
+python ./../test.py --network=/path/to/model --pose_dist=label.npy --output_path ./result/samples --res=1024 --truncation=0.7 --number=100 --type=gen_samples --is_normal True --is_img_raw False

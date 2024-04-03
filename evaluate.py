@@ -1,4 +1,4 @@
-"""evaluate fid of HD(low resolution). """
+"""evaluate fid of HD(1024^2 resolution)."""
 
 import os
 import click
@@ -71,7 +71,7 @@ def evaluation(ctx, network, data, res, gpus, verbose, metrics, save_dirs):
     with dnnlib.util.open_url(network) as f:
         G = legacy.load_network_pkl(f)['G_ema'].to(device) # type: ignore
 
-    from training.triplane import AG3DGenerator
+    from training_HR.triplane import AG3DGenerator
 
     print("Reloading Modules!")
     G_new = AG3DGenerator(*G.init_args, **G.init_kwargs).eval().requires_grad_(False).to(device)

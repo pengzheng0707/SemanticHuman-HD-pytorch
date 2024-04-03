@@ -24,7 +24,7 @@ from torch_utils import custom_ops
 from torch_utils import misc
 from torch_utils.ops import conv2d_gradfix
 from utils.mesh_renderer import Renderer, render_trimesh
-from utils.visualization_utils import gen_samples, gen_novel_view, calculate_rotation, gen_interp, gen_anim
+from utils.visualization_utils import gen_samples, gen_novel_view, calculate_rotation, gen_interp, gen_anim, gen_semantic, gen_pose, gen_video
 
 from training.zp import mixing_noise
 # #----------------------------------------------------------------------------
@@ -44,16 +44,16 @@ def parse_comma_separated_list(s):
 @click.option('--network', help='Network pickle filename or URL', metavar='PATH', required=True)
 @click.option('--truncation', default=0.7, help='truncation_number', required=True)
 @click.option('--pose_dist', help='Pose distribution of training dataset', metavar='[ZIP|DIR]')
-@click.option('--res', help='Image resolution', type=int, default=256, metavar='INT', show_default=False)
+@click.option('--res', help='Image resolution', type=int, default=1024, metavar='INT', show_default=False)
 @click.option('--output_path', help='Network pickle filename or URL', metavar='PATH', required=True)
-@click.option('--number', help='Number of generation', metavar='INT', default=1, required=False)
+@click.option('--number', help='Number of generation', metavar='INT', default=100, required=False)
 @click.option('--metrics', help='Quality metrics', metavar='[NAME|A,B,C|none]', type=parse_comma_separated_list, default='fid5k_full', show_default=True)
 @click.option('--gpus', help='Number of GPUs to use', type=int, default=1, metavar='INT', show_default=True)
 @click.option('--verbose', help='Print optional information', type=bool, default=True, metavar='BOOL', show_default=True)
 @click.option('--type', help='Output type', type=str, default='gen_samples', metavar='STR', show_default=True)
 @click.option('--motion_path', help='Motion path of animation', type=str, default=None, metavar='STR', show_default=True)
 @click.option('--is_img', help='whether output rendered image', type=bool, default=True)
-@click.option('--is_normal', help='whether output rendered normal', type=bool, default=False)
+@click.option('--is_normal', help='whether output rendered normal', type=bool, default=True)
 @click.option('--is_img_raw', help='whether output raw rendering', type=bool, default=False)
 @click.option('--is_mesh', help='whether output rendered mesh', type=bool, default=False)
 
@@ -80,7 +80,7 @@ def visualization(ctx, network, truncation, pose_dist, res, output_path, number,
     with dnnlib.util.open_url(network) as f:
         G = legacy.load_network_pkl(f)['G_ema'].to(device) # type: ignore
 
-    from training.triplane import AG3DGenerator
+    from training_HR.triplane import AG3DGenerator
 
     print("Reloading Modules!")
     G_new = AG3DGenerator(*G.init_args, **G.init_kwargs).eval().requires_grad_(False).to(device)
@@ -119,21 +119,12 @@ def visualization(ctx, network, truncation, pose_dist, res, output_path, number,
             'is_normal':True,
     })
     
-    # if rank == 0 and args.verbose:
-    #     z = torch.empty([1, G.z_dim], device=device)
-    #     c = torch.empty([1, G.c_dim], device=device)
-    #     misc.print_module_summary(G, [z, c])
-
-
-    # dataset = dnnlib.util.construct_class_by_name(**args.dataset_kwargs)
     dataset = np.load(pose_dist)
 
     if not os.path.exists(output_path):
         os.makedirs(output_path)
 
     with torch.no_grad():
-        
-        # zs = torch.randn([number, G.z_dim], device=device)
         zs = [mixing_noise(1, G.z_dim, prob=0.9, device=device)for i in range(number)]
         
         if 'gen_interp' in type:
@@ -144,26 +135,36 @@ def visualization(ctx, network, truncation, pose_dist, res, output_path, number,
             for _i in trange(len(zs1)):
                 
                 n_steps = 8
-                z1 = zs1[_i:_i+1]
-                z2 = zs2[_i:_i+1]
+                z1 = zs1[_i:_i+1][0]
+                z2 = zs2[_i:_i+1][0]
                 c1 = torch.from_numpy(dataset[np.random.randint(len(dataset))]).pin_memory().to(device).unsqueeze(0)
                 c2 = torch.from_numpy(dataset[np.random.randint(len(dataset))]).pin_memory().to(device).unsqueeze(0)
                 
                 save_path = f'{output_path}/{_i:05}_interp.png'
                 
-                gen_interp(G, z1, z2, c1, c2, truncation, res, is_img, is_img_raw, is_normal, is_mesh, save_path, n_steps)
-        
+                gen_interp(G, z1, z2, c1, c2, truncation, res, is_img, is_img_raw, is_normal, is_mesh, save_path, n_steps, device)
+        c_map = torch.from_numpy(dataset[np.random.randint(len(dataset))]).pin_memory().to(device).unsqueeze(0)
+        z_map= G.mapping(zs[0:1][0], c_map, truncation_psi=truncation)
+        c_first = torch.from_numpy(dataset[0]).pin_memory().to(device).unsqueeze(0)
         for _i in trange(len(zs)):
             
             z = zs[_i:_i+1][0]
 
             c = torch.from_numpy(dataset[np.random.randint(len(dataset))]).pin_memory().to(device).unsqueeze(0)
-            
-            if 'gen_samples' in type:
-                
+            new_c_map = torch.from_numpy(dataset[np.random.randint(len(dataset))]).pin_memory().to(device).unsqueeze(0)
+
+            if 'semantic' in type:
                 save_path = f'{output_path}/{_i:05}.png'
-                gen_samples(G, z, c, truncation,res, is_img, is_img_raw, is_normal, is_mesh, save_path)
+                gen_semantic(G, z_map, c_map, truncation,res, is_img, is_img_raw, is_normal, is_mesh, save_path, cano=False, new_c_map=new_c_map, idx = _i)
+
+            if 'gen_samples' in type:
+                save_path = f'{output_path}/{_i:05}.png'
+                gen_samples(G, z, c, truncation,res, is_img, is_img_raw, is_normal, is_mesh, save_path, _i=_i)
             
+            if 'pose' in type:
+                save_path = f'{output_path}/{_i:05}.png'
+                gen_pose(G, z_map, new_c_map, truncation,res, is_img, is_img_raw, is_normal, is_mesh, save_path)
+
             if 'gen_cano' in type:
                 
                 save_path = f'{output_path}/{_i:05}_cano.png'
@@ -187,9 +188,24 @@ def visualization(ctx, network, truncation, pose_dist, res, output_path, number,
                 save_path = f'{output_path}/{_i:05}.mp4'
                 
                 gen_novel_view(G, z, c, truncation,res, is_img, is_img_raw, is_normal, is_mesh, save_path, angles)
+            if 'gen_video' in type:
+                
+                save_path = f'{output_path}/{_i:05}.mp4'
+                full_rotation = False
+                
+                if full_rotation:
+                    
+                    angles = np.array(range(0, 361, 6))
+                   
+                else:
+                    rotation_angle = 40
+                    spacing = 8
+                    angles = calculate_rotation(rotation_angle, spacing)
+                
+                save_path = f'{output_path}/{_i:05}.mp4'
+                gen_video(G, z, c, truncation,res, is_img, is_img_raw, is_normal, is_mesh, save_path, angles)
                 
             if 'gen_anim' in type:
-                
                 save_path = f'{output_path}/{_i:05}_anim.mp4'
                 gen_anim(G, z, c, truncation,res, is_img, is_img_raw, is_normal, is_mesh, save_path, motion_path)   
             

@@ -1,1 +1,0 @@
-CUDA_VISIBLE_DEVICES=1 python fid_from_dir.py 
