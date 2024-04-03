@@ -30,7 +30,7 @@ conda env create -f env.yml
 conda activate HD
 python setup.py install
 ```
-##Download pretrained model:
+## Download pretrained model:
 
 ```
 sh ./scripts/download_model.sh
