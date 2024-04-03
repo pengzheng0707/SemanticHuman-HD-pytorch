@@ -1,0 +1,1 @@
+CUDA_VISIBLE_DEVICES=2 python evaluate1024.py --metrics=fid5k_full --network=/home/liuruiqi/zp/AG3Dforzp_slum1027/network-snapshot_000188.pkl --data=/home/liuruiqi/zp/SemanticHumanGAN/datasets/DeepFashion/images --res=512
