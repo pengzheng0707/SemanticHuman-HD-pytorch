@@ -30,7 +30,7 @@ cd SemanticHuman-HD
 ```
 We suggest use anaconda to manage the python environment:
 ```
-conda env create -f env.yml
+conda env create -f environment.yml
 conda activate HD
 python setup.py install
 ```
